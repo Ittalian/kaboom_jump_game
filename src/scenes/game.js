@@ -1,7 +1,7 @@
-import { k } from '../kaboom';
+import { k } from "../kaboom";
 
 export function getGame() {
-  k.scene('game', () => {
+  k.scene("game", () => {
     const player = k.add([
       k.rect(25, 25),
       k.pos(80, 160),
@@ -12,17 +12,24 @@ export function getGame() {
         jumpForce: 800,
         gravityScale: 2,
       }),
-	  'player'
+      "player",
     ]);
 
-	k.add([
-		k.rect(50, 50),
-		k.pos(k.width() - 80, k.height() - 120),
-		k.outline(2),
-		k.anchor('botright'),
-		k.area(),
-		'jumpButton'
-	]);
+    k.add([
+      k.rect(50, 50),
+      k.pos(k.width() - 80, k.height() - 120),
+      k.anchor("botright"),
+      k.area(),
+      k.outline(2)
+    ]);
+
+    k.add([
+      k.sprite('upAllow', {width: 50, height: 50}),
+      k.pos(k.width() - 80, k.height() - 120),
+      k.anchor("botright"),
+      k.area(),
+      "jumpButton",
+    ]);
 
     k.add([
       k.rect(k.width(), 40),
@@ -32,20 +39,21 @@ export function getGame() {
       k.body({ isStatic: true }),
     ]);
 
-    const score = k.add([k.text(0), k.pos(24, 24)]);
+    const score = k.add([k.text(0), k.pos(24, 24), { count: 0 }]);
 
     function spawn() {
       const color = getRandomColor();
+      const rect = getRandomRect();
       k.add([
-        k.rect(40, 60),
+        rect,
         k.pos(k.width(), k.height() - 40),
         k.outline(2),
         color,
         k.move(k.LEFT, 400),
-        k.anchor('botleft'),
+        k.anchor("botleft"),
         k.area(),
         k.offscreen({ destroy: true }),
-        'box',
+        "box",
       ]);
 
       k.wait(k.rand(0.6, 1.5), spawn);
@@ -55,13 +63,21 @@ export function getGame() {
       return k.color(k.rand(0, 255), k.rand(0, 255), k.rand(0, 255));
     }
 
-	k.onClick('jumpButton', () => {
-		if (player.isGrounded()) player.jump();
-	});
+    function getRandomRect() {
+      return k.rect(40, rand(30, 80));
+    }
 
-    k.onCollide('player', 'box', (p, b) => {
+    k.onClick("jumpButton", () => {
+      if (player.isGrounded()) player.jump();
+    });
+
+    k.onCollide("player", "box", (p, b) => {
       k.addKaboom(p.pos);
-	  k.go('gameover')
+      k.go("gameover", score.count);
+    });
+
+    score.onUpdate(() => {
+      score.text = score.count++;
     });
 
     spawn();
