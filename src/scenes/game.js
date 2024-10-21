@@ -16,14 +16,6 @@ export function getGame() {
     ]);
 
     k.add([
-      k.rect(50, 50),
-      k.pos(k.width() - 80, k.height() - 120),
-      k.anchor("botright"),
-      k.area(),
-      k.outline(2)
-    ]);
-
-    k.add([
       k.sprite('upAllow', {width: 50, height: 50}),
       k.pos(k.width() - 80, k.height() - 120),
       k.anchor("botright"),
